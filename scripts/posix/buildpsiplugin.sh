@@ -49,21 +49,20 @@ fetch_tools() {
 
 fetch_plugin() {
 	local curd=`pwd`
-	cd "${PLUGIN_DIR}/generic"
+	cd "${PLUGIN_DIR}"
 	git_fetch "${GIT_REPO_PLUGIN}" sofgameplugin "Plugin sources"
 	cd "${curd}"
 }
-
-# for step in $(echo "fetch_all prepare_all compile_all install_all")
 
 if [ ! -d "${PLUGIN_DIR}" ]
 then
 	mkdir "${PLUGIN_DIR}" || die "can't create work directory ${PLUGIN_DIR}"
 fi
-if [ ! -d "${PLUGIN_DIR}"/generic ]
+if [ -d "${PLUGIN_DIR}"/build ]
 then
-	mkdir "${PLUGIN_DIR}"/generic || die "can't create build directory ${PLUGIN_DIR}/generic"
+	rm -rf "${PLUGIN_DIR}"/build || die "can't remove build directory ${PLUGIN_DIR}/build"
 fi
+mkdir -p "${PLUGIN_DIR}"/build/generic || die "can't create build directory ${PLUGIN_DIR}/build/generic"
 log "Created base directory structure"
 
 fetch_tools
@@ -71,12 +70,9 @@ fetch_plugin
 
 curdir=`pwd`
 cd "${PLUGIN_DIR}"
-
-[ -f plugins.pri ] || ln -s plugin-tools/psiplus-headers/plugins.pri plugins.pri
-[ -f psiplugin.pri ] || ln -s plugin-tools/psiplus-headers/psiplugin.pri psiplugin.pri
-[ -d include ] || ln -s plugin-tools/psiplus-headers/include include
-
-cd generic/sofgameplugin
+cp -r plugin-tools/psiplus-headers/* build/
+cp -r sofgameplugin build/generic/
+cd build/generic/sofgameplugin
 
 qmake
 make
@@ -84,7 +80,7 @@ make
 cd "${curdir}"
 
 echo
-ls -l ${PLUGIN_DIR}/generic/sofgameplugin/*.so
+ls -l ${PLUGIN_DIR}/build/generic/sofgameplugin/*.so
 echo
 
 echo "Done."
