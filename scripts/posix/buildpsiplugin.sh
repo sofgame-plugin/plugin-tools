@@ -74,7 +74,15 @@ cp -r plugin-tools/psiplus-headers/* build/
 cp -r sofgameplugin build/generic/
 cd build/generic/sofgameplugin
 
+if [ "$1" = "develop" ]
+then
+	log "Checkout to develop .."
+	git checkout -b develop origin/develop
+fi
+
+log "QMake .."
 qmake
+log "Make .."
 make
 
 cd "${curdir}"
