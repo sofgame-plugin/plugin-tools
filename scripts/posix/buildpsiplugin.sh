@@ -78,6 +78,12 @@ if [ "$1" = "develop" ]
 then
 	log "Checkout to develop .."
 	git checkout -b develop origin/develop
+	log "Fix version .."
+	hash=`git log -n 1 --pretty=format:%h`
+	sed -i -E "s/([0-9]+\\.[0-9]+\\.[0-9]+\\.dev)/\\1-${hash}/" plugin_core.h
+else
+	log "Checkout to master .."
+	git checkout master
 fi
 
 log "QMake .."
