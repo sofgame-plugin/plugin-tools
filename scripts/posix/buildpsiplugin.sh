@@ -17,7 +17,8 @@ PLUGIN_DIR="_psiplugin"
 # Пути к исходникам и заголовочным файлам psi-plus
 GIT_REPO_PLUGIN="git://github.com/sofgame-plugin/psiplus-plugin.git"
 GIT_REPO_TOOLS="git://github.com/sofgame-plugin/plugin-tools.git"
-
+# Опции для make
+MAKEOPT=""
 
 
 die() { echo; echo " !!!ERROR: $@"; exit 1; }
@@ -52,6 +53,29 @@ fetch_plugin() {
 	cd "${PLUGIN_DIR}"
 	git_fetch "${GIT_REPO_PLUGIN}" sofgameplugin "Plugin sources"
 	cd "${curd}"
+}
+
+get_make_opt() {
+	case "`uname`" in
+	FreeBSD)
+		MAKEOPT=${MAKEOPT:--j$((`sysctl -n hw.ncpu`+1))}
+		;;
+	Darwin)
+		MAKEOPT=${MAKEOPT:--j$((`sysctl -n hw.ncpu`+1))}
+		;;
+	SunOS)
+		local CPUS=`/usr/sbin/psrinfo | grep on-line | wc -l | tr -d ' '`
+		if test "x$CPUS" = "x" -o $CPUS = 0; then
+			CPUS=1
+		fi
+		MAKEOPT=${MAKEOPT:--j$CPUS}
+		;;
+	MINGW32*)
+		;;
+	*)
+		MAKEOPT=${MAKEOPT:--j$((`cat /proc/cpuinfo | grep processor | wc -l`+1))}
+		;;
+	esac
 }
 
 if [ ! -d "${PLUGIN_DIR}" ]
@@ -89,7 +113,8 @@ fi
 log "QMake .."
 qmake
 log "Make .."
-make
+get_make_opt
+make ${MAKEOPT}
 
 cd "${curdir}"
 
