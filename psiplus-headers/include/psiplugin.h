@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
  */
 
@@ -69,12 +69,12 @@ public:
 
 	/**
 	 * \brief Short name for the plugin
-	 * This is the short name of the plugin, used for options structures. 
+	 * This is the short name of the plugin, used for options structures.
 	 * It must consist of only alphanumerics (no spaces or punctuation).
 	 * \return Short plugin name
 	*/
 	virtual QString shortName() const = 0;
-	
+
 	/**
 	 * \brief Plugin version
 	 * Free-form string of the plugin version. Human readable
@@ -110,8 +110,10 @@ public:
 
 	virtual void applyOptions() = 0;
 	virtual void restoreOptions() = 0;
+
+	virtual QPixmap icon() const = 0;
 };
 
-Q_DECLARE_INTERFACE(PsiPlugin, "org.psi-im.PsiPlugin/0.3");
+Q_DECLARE_INTERFACE(PsiPlugin, "org.psi-im.PsiPlugin/0.4");
 
 #endif
